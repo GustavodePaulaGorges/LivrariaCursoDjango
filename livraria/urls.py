@@ -1,5 +1,5 @@
 """livraria URL Configuration
-
+ 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
@@ -21,5 +21,7 @@ from core import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('teste/' , views.teste),
-    path('pag2/' , views.teste2)
+    path('pag2/' , views.teste2),
+    path('categorias/', views.CategoriaView.as_view()),
+    path('categorias/<int:id>/', views.CategoriaView.as_view())
 ]
