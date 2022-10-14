@@ -34,6 +34,6 @@ urlpatterns = [
     path('categorias-apiview/<int:id>/', views.CategoriaDetail.as_view()),
     path('categorias-generic/', views.CategoriasListGeneric.as_view()),
     path('categorias-generic/<int:id>/', views.CategoriaDetailGeneric.as_view()), 
-    path('/', include(router.urls))
+    path('', include(router.urls))
 ]
 
