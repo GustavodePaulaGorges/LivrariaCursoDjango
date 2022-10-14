@@ -1,10 +1,16 @@
+from urllib import response
 from django.http import HttpResponse, JsonResponse 
 from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
+from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.serializers import Serializer
+from rest_framework.response import Response
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.serializers import ModelSerializer
+from rest_framework.viewsets import ModelViewSet
 
 from core.models import Categoria
 
@@ -16,6 +22,7 @@ def teste(request):
 def teste2(request):
     return HttpResponse("Outra Página")
 
+#métodos de fazer o crud, formas cada vez melhores de fazer a mesma coisa conforme vai indo pra baixo
 
 @method_decorator(csrf_exempt, name="dispatch")
 class CategoriaView(View):
@@ -52,10 +59,61 @@ class CategoriaView(View):
         qs.delete()
         data = {'mensagem': "Item excluído com sucesso."}
         return JsonResponse(data)
-    
-class CategoriaSerializer()
+
+#serializador das Categorias (ele será usado depois):
+
+class CategoriaSerializer(ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
 
 
 class CategoriasList(APIView):
     def get(self, request):
-        categorias = Categoria.objects.all()
+        categorias = Categoria.objects.all() 
+        serializer = CategoriaSerializer(categorias, many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        serializer = CategoriaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CategoriaDetail(APIView):
+    def get(self, request, id):
+        categoria = get_object_or_404(Categoria.objects.all(), id=id)
+        serializer = CategoriaSerializer(categoria)
+        return Response(serializer.data)
+
+    def put(self, request, id):
+        categoria = get_object_or_404(Categoria.objects.all(), id=id)
+        serializer = CategoriaSerializer(categoria, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, id):
+        categoria = get_object_or_404(Categoria.objects.all(), id=id)
+        categoria.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CategoriasListGeneric(ListCreateAPIView):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+class CategoriaDetailGeneric(RetrieveUpdateDestroyAPIView):
+    lookup_field = 'id'
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+#melhor método de fazer esse crud:
+
+class CategoriaViewSet(ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
