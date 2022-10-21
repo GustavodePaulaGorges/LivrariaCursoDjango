@@ -1,4 +1,8 @@
+from email.policy import default
+from statistics import quantiles
+from xml.dom import ValidationErr
 from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
+from rest_framework import serializers
 
 from core.models import Autor, Categoria, Compra, Editora, Livro, ItensCompra
 
@@ -80,10 +84,19 @@ class CriarEditarItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
         fields = ("livro", "quantidade")
+    
+    def validate(self, data):
+        if data['quantidade'] > data['livro'].quantidade:
+            raise serializers.ValidationError({
+                'quantidade': 'Quantidade solicitada não disponível em estoque'
+        })
+        return data
+        
 
 
 class CriarEditarCompraSerializer(ModelSerializer):
     itens = CriarEditarItensCompraSerializer(many=True)
+    usuario = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Compra
@@ -97,5 +110,11 @@ class CriarEditarCompraSerializer(ModelSerializer):
         compra.save()
         return compra
 
-
-# terminei a aula 34 e vou começar a 35
+    def update(self, instance, validated_data):
+        itens = validated_data.pop("itens")
+        if itens:
+            instance.itens.all().delete()
+            for item in itens:
+                ItensCompra.objects.create(compra=instance, **item)
+            instance.save()
+        return instance
