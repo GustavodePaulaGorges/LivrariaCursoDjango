@@ -1,6 +1,3 @@
-from email.policy import default
-from statistics import quantiles
-from xml.dom import ValidationErr
 from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
 from rest_framework import serializers
 
@@ -84,14 +81,13 @@ class CriarEditarItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
         fields = ("livro", "quantidade")
-    
+
     def validate(self, data):
-        if data['quantidade'] > data['livro'].quantidade:
-            raise serializers.ValidationError({
-                'quantidade': 'Quantidade solicitada não disponível em estoque'
-        })
+        if data["quantidade"] > data["livro"].quantidade:
+            raise serializers.ValidationError(
+                {"quantidade": "Quantidade solicitada não disponível em estoque"}
+            )
         return data
-        
 
 
 class CriarEditarCompraSerializer(ModelSerializer):

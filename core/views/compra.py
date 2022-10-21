@@ -1,4 +1,3 @@
-from unicodedata import name
 from rest_framework.viewsets import ModelViewSet
 
 from core.models import Compra
