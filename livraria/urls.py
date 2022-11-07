@@ -24,7 +24,6 @@ router.register(r"livros", views.LivroViewSet)
 router.register(r"compras", views.CompraViewSet)
 
 
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     # Open API 3:
