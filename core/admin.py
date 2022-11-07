@@ -1,4 +1,3 @@
-from unittest import mock
 from django.contrib import admin
 
 from core.models import Autor, Categoria, Compra, Editora, ItensCompra, Livro
@@ -11,6 +10,7 @@ admin.site.register(Livro)
 
 class ItensInline(admin.TabularInline):
     model = ItensCompra
+
 
 @admin.register(Compra)
 class CompraAdmin(admin.ModelAdmin):
