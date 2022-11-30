@@ -33,7 +33,7 @@ class Livro(models.Model):
     ISBN = models.CharField(max_length=32)
     quantidade = models.IntegerField()
     preco = models.FloatField()
-    capa = models.CharField(max_length=10000)
+    capa = models.ImageField()
     categoria = models.ForeignKey(
         Categoria, on_delete=models.PROTECT, related_name="livros"
     )
