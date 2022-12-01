@@ -33,7 +33,10 @@ class Livro(models.Model):
     ISBN = models.CharField(max_length=32)
     quantidade = models.IntegerField()
     preco = models.FloatField()
-    capa = models.CharField(max_length=10000)
+    imagem = models.CharField(
+        max_length=100000,
+        default="https://www.maxicolor.com.br/wp-content/uploads/2019/11/placeholder-3x4-450x600.jpg",
+    )
     categoria = models.ForeignKey(
         Categoria, on_delete=models.PROTECT, related_name="livros"
     )
